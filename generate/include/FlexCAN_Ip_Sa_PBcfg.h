@@ -25,8 +25,8 @@
  * will be overwritten if the respective S32 Configuration Tools is used to update this file.
  **********************************************************************************************************************/
 
-#ifndef FLEXCAN_IP_PBCFG_H
-#define FLEXCAN_IP_PBCFG_H
+#ifndef FLEXCAN_IP_SA_PBCFG_H
+#define FLEXCAN_IP_SA_PBCFG_H
 
 /**
 *   @file FlexCAN_IP_PBcfg.h
@@ -50,15 +50,15 @@ extern "C"{
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
 /*
-* @file           FlexCAN_Ip_PBcfg.h
+* @file           FlexCAN_Ip_Sa_PBcfg.h
 */
-#define FLEXCAN_IP_VENDOR_ID_PBCFG_H                     43
-#define FLEXCAN_IP_AR_RELEASE_MAJOR_VERSION_PBCFG_H      4
-#define FLEXCAN_IP_AR_RELEASE_MINOR_VERSION_PBCFG_H      7
-#define FLEXCAN_IP_AR_RELEASE_REVISION_VERSION_PBCFG_H   0
-#define FLEXCAN_IP_SW_MAJOR_VERSION_PBCFG_H              5
-#define FLEXCAN_IP_SW_MINOR_VERSION_PBCFG_H              0
-#define FLEXCAN_IP_SW_PATCH_VERSION_PBCFG_H              0
+#define FLEXCAN_IP_SA_VENDOR_ID_PBCFG_H                     43
+#define FLEXCAN_IP_SA_AR_RELEASE_MAJOR_VERSION_PBCFG_H      4
+#define FLEXCAN_IP_SA_AR_RELEASE_MINOR_VERSION_PBCFG_H      7
+#define FLEXCAN_IP_SA_AR_RELEASE_REVISION_VERSION_PBCFG_H   0
+#define FLEXCAN_IP_SA_SW_MAJOR_VERSION_PBCFG_H              5
+#define FLEXCAN_IP_SA_SW_MINOR_VERSION_PBCFG_H              0
+#define FLEXCAN_IP_SA_SW_PATCH_VERSION_PBCFG_H              0
 /*==================================================================================================
 *                                     FILE VERSION CHECKS
 ==================================================================================================*/
@@ -70,12 +70,15 @@ extern "C"{
 /*==================================================================================================
 *                                      DEFINES AND MACROS
 ==================================================================================================*/
-#define FLEXCAN_IP_PB_CFG  \
-    extern const Flexcan_Ip_ConfigType Flexcan_aCtrlConfigPB[1U];
+#define FLEXCAN_IP_SA_PB_CFG \
+extern const Flexcan_Ip_ConfigType FlexCAN_Config0; 
+#define INST_FLEXCAN_0 0U
+#define FLEXCAN_IP_SA_STATE_PB_CFG \
+extern Flexcan_Ip_StateType FlexCAN_State0; 
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* FLEXCAN_IP_PBCFG_H */
+#endif /* FLEXCAN_IP_SA_PBCFG_H */
 

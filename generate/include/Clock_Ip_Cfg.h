@@ -1,18 +1,19 @@
 /*==================================================================================================
-*   Project              : RTD AUTOSAR 4.7
+*   Project              : RTD AUTOSAR 4.4
 *   Platform             : CORTEXM
-*   Peripheral           : 
+*   Peripheral           : S32CC
 *   Dependencies         : none
 *
-*   Autosar Version      : 4.7.0
-*   Autosar Revision     : ASR_REL_4_7_REV_0000
+*   Autosar Version      : 4.4.0
+*   Autosar Revision     : ASR_REL_4_4_REV_0000
 *   Autosar Conf.Variant :
-*   SW Version           : 5.0.0
-*   Build Version        : S32K3_RTD_5_0_0_D2408_ASR_REL_4_7_REV_0000_20241002
+*   SW Version           : 3.0.0
+*   Build Version        : 
 *
-*   Copyright 2020 - 2024 NXP
+*   Copyright 2020-2021 NXP
 *
-*   NXP Confidential and Proprietary. This software is owned or controlled by NXP and may only be
+*
+*   NXP Confidential. This software is owned or controlled by NXP and may only be
 *   used strictly in accordance with the applicable license terms. By expressly
 *   accepting such terms or by downloading, installing, activating and/or otherwise
 *   using the software, you are agreeing that you have read, and that you agree to
@@ -22,7 +23,7 @@
 ==================================================================================================*/
 /**
 *   @file       Clock_Ip_Cfg.h
-*   @version    5.0.0
+*   @version    3.0.0
 *
 *   @brief   AUTOSAR Mcu - Clock configuration header file.
 *   @details This file is the header containing all the necessary information for CLOCK
@@ -47,43 +48,21 @@ extern "C"{
  2) needed interfaces from external units
  3) internal and external interfaces from this unit
 ==================================================================================================*/
-#include "Clock_Ip_PBcfg.h"
 
 /*==================================================================================================
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
 #define CLOCK_IP_CFG_VENDOR_ID                      43
 #define CLOCK_IP_CFG_AR_RELEASE_MAJOR_VERSION       4
-#define CLOCK_IP_CFG_AR_RELEASE_MINOR_VERSION       7
+#define CLOCK_IP_CFG_AR_RELEASE_MINOR_VERSION       4
 #define CLOCK_IP_CFG_AR_RELEASE_REVISION_VERSION    0
-#define CLOCK_IP_CFG_SW_MAJOR_VERSION               5
-#define CLOCK_IP_CFG_SW_MINOR_VERSION               0
-#define CLOCK_IP_CFG_SW_PATCH_VERSION               0
+#define CLOCK_IP_CFG_SW_MAJOR_VERSION               0
+#define CLOCK_IP_CFG_SW_MINOR_VERSION               1
+#define CLOCK_IP_CFG_SW_PATCH_VERSION               2
 
 /*==================================================================================================
 *                                     FILE VERSION CHECKS
 ==================================================================================================*/
-/* Check if Clock_Ip_Cfg.h file and Clock_Ip_PBcfg.h file are of the same vendor */
-#if (CLOCK_IP_CFG_VENDOR_ID != CLOCK_IP_PBCFG_VENDOR_ID)
-    #error "Clock_Ip_Cfg.h and Clock_Ip_PBcfg.h have different vendor ids"
-#endif
-
-/* Check if Clock_Ip_Cfg.h file and Clock_Ip_PBcfg.h file are of the same Autosar version */
-#if ((CLOCK_IP_CFG_AR_RELEASE_MAJOR_VERSION != CLOCK_IP_PBCFG_AR_RELEASE_MAJOR_VERSION) || \
-     (CLOCK_IP_CFG_AR_RELEASE_MINOR_VERSION != CLOCK_IP_PBCFG_AR_RELEASE_MINOR_VERSION) || \
-     (CLOCK_IP_CFG_AR_RELEASE_REVISION_VERSION != CLOCK_IP_PBCFG_AR_RELEASE_REVISION_VERSION) \
-    )
-    #error "AutoSar Version Numbers of Clock_Ip_Cfg.h and Clock_Ip_PBcfg.h are different"
-#endif
-
-/* Check if Clock_Ip_Cfg.h file and Clock_Ip_PBcfg.h file are of the same Software version */
-#if ((CLOCK_IP_CFG_SW_MAJOR_VERSION != CLOCK_IP_PBCFG_SW_MAJOR_VERSION) || \
-     (CLOCK_IP_CFG_SW_MINOR_VERSION != CLOCK_IP_PBCFG_SW_MINOR_VERSION) || \
-     (CLOCK_IP_CFG_SW_PATCH_VERSION != CLOCK_IP_PBCFG_SW_PATCH_VERSION) \
-    )
-  #error "Software Version Numbers of Clock_Ip_Cfg.h and Clock_Ip_PBcfg.h are different"
-#endif
-
 /*==================================================================================================
                                            DEFINES AND MACROS
 ==================================================================================================*/
@@ -109,6 +88,18 @@ extern "C"{
     #error MCAL_ENABLE_USER_MODE_SUPPORT is not enabled. For running Clock in user mode the MCAL_ENABLE_USER_MODE_SUPPORT needs to be defined.
   #endif /* (STD_ON == CLOCK_IP_ENABLE_USER_MODE_SUPPORT) */
 #endif /* ifndef MCAL_ENABLE_USER_MODE_SUPPORT */
+
+/**
+* @brief            The callout configured by the user for CMU notifications.
+*/
+
+#define CLOCK_IP_CMU_FCCU_NOTIFICATION(ClockName)   CmuFccuNotificationCallback
+
+/**
+* @brief            The callout configured by the user for preparing flash and ram controllers configuration.
+*/
+
+#define CLOCK_IP_PREPARE_MEMORY_CONFIG(ConfigStage)   PrepareMemoryConfigCallback
 
 /*==================================================================================================
                                              ENUMS
@@ -140,7 +131,32 @@ typedef enum
 #define MCU_START_SEC_CODE
 #include "Mcu_MemMap.h"
 
+/**
+* @brief            The callout configured by the user for CMU notifications.
+*/
+extern void CLOCK_IP_CMU_FCCU_NOTIFICATION(Clock_Ip_NameType ClockName);
+
+/**
+* @brief            The callout configured by the user for Memory notifications.
+*/
+extern void CLOCK_IP_PREPARE_MEMORY_CONFIG(Clock_Ip_MemoryConfigStageType  ConfigStage);
+
 #define MCU_STOP_SEC_CODE
+#include "Mcu_MemMap.h"
+
+
+#define MCU_START_SEC_CONFIG_DATA_UNSPECIFIED
+#include "Mcu_MemMap.h"
+
+
+/* *************************************************************************
+ * Configuration structure for Clock Configuration 
+ * ************************************************************************* */
+
+extern const Clock_Ip_ClockConfigType Clock_Ip_aClockConfig[];
+
+
+#define MCU_STOP_SEC_CONFIG_DATA_UNSPECIFIED
 #include "Mcu_MemMap.h"
 
 #ifdef __cplusplus
@@ -150,5 +166,4 @@ typedef enum
 #endif /* CLOCK_IP_CFG_H */
 
 /** @} */
-
 

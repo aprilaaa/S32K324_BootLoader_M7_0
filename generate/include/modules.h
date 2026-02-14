@@ -101,7 +101,7 @@ extern "C" {
 /** 
 * @brief This constant used for other modules to check if CAN_43_FLEXCAN is present in the project.   
 */
-#define USE_CAN_43_FLEXCAN_MODULE              (STD_ON)
+#define USE_CAN_43_FLEXCAN_MODULE              (STD_OFF)
 
 /** 
 * @brief This constant used for other modules to check if CAN_43_CANEXCEL is present in the project.   
@@ -271,7 +271,7 @@ extern "C" {
 /** 
 * @brief This constant used for other modules to check if MCU is present in the project.   
 */
-#define USE_MCU_MODULE              (STD_ON)
+#define USE_MCU_MODULE              (STD_OFF)
 
 /** 
 * @brief This constant used for other modules to check if MEMACC is present in the project.   
@@ -311,7 +311,7 @@ extern "C" {
 /** 
 * @brief This constant used for other modules to check if PORT is present in the project.   
 */
-#define USE_PORT_MODULE             (STD_ON)
+#define USE_PORT_MODULE             (STD_OFF)
 
 /** 
 * @brief This constant used for other modules to check if PSI5 is present in the project.   
