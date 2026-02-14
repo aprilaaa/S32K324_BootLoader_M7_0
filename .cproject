@@ -709,7 +709,7 @@
 	<storageModule moduleId="refreshScope"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="com.nxp.s32ds.cle.uct.core">
-		<sdkComponents>platform.driver.osif;platform.driver.det;platform.driver.rte_mcu;platform.driver.clock;platform.driver.FlexCAN;platform.driver.rte_can;platform.driver.siul2_port;platform.driver.rte_port</sdkComponents>
+		<sdkComponents>platform.driver.osif;platform.driver.det;platform.driver.rte_mcu;platform.driver.clock;platform.driver.FlexCAN;platform.driver.rte_can;platform.driver.siul2_port;platform.driver.rte_port;platform.driver.power;platform.driver.c40_ip;platform.driver.cache;platform.driver.rte_mcl;platform.driver.rte_mem_43_infls;platform.driver.IntCtrl_Ip;platform.driver.pit;platform.driver.rte_gpt;platform.driver.siul2_dio;platform.driver.rte_dio</sdkComponents>
 	</storageModule>
 	<storageModule moduleId="com.nxp.s32ds.cle.uct.internal.core.toolchainSettings">
 		<COND_TOOLCHAIN_LIBRARIES/>
@@ -719,6 +719,6 @@
 		<COND_TOOLCHAIN_CUSTOM_OPTION/>
 	</storageModule>
 	<storageModule moduleId="com.nxp.s32ds.cle.uct.internal.core.toolchainScriptProfile">
-		<COND_TOOLCHAIN_COMPONENTS_OPTION>COPY=platform.driver.clock;platform.driver.osif;platform.driver.FlexCAN;platform.driver.siul2_port</COND_TOOLCHAIN_COMPONENTS_OPTION>
+		<COND_TOOLCHAIN_COMPONENTS_OPTION>COPY=platform.driver.siul2_dio;platform.driver.pit;platform.driver.power;platform.driver.clock;platform.driver.osif;platform.driver.FlexCAN;platform.driver.IntCtrl_Ip;platform.driver.siul2_port;platform.driver.cache;platform.driver.c40_ip</COND_TOOLCHAIN_COMPONENTS_OPTION>
 	</storageModule>
 </cproject>
