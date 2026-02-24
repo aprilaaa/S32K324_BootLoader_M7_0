@@ -1,6 +1,6 @@
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!Configuration
-name: ClockConfig0
+name: BOARD_BootClockRUN
 called_from_default_init: true
 outputs:
 - {id: ADC0_CLK.outFreq, value: 160 MHz}

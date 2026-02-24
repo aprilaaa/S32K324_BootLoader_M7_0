@@ -34,6 +34,13 @@
 volatile int exit_code = 0;
 /* User includes */
 
+/* Including necessary configuration files. */
+#include "includes.h"
+/* User includes */
+
+#include "bootloader_main.h"
+#include "TP.h"
+
 /*!
   \brief The main function for the project.
   \details The startup initialization sequence is the following:
