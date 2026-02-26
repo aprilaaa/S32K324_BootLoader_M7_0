@@ -56,8 +56,6 @@ static boolean FLASH_HAL_ReadData(const uint32 i_startAddr,
 					    		uint8 *o_pDataBuf);
 
 static void FLASH_HAL_Deinit(void);
-
-extern void C40_Ip_StartSequenceInit(uint8_t* FlsDrv);
 /*FUNCTION**********************************************************************
  *
  * Function Name : FLASH_HAL_Init
@@ -67,11 +65,7 @@ extern void C40_Ip_StartSequenceInit(uint8_t* FlsDrv);
  *END**************************************************************************/
 static boolean FLASH_HAL_Init(void)
 {
-	uint32 FlashDriverAddrStart,FlashDriverEndAddr;
-	FLASH_HAL_GetFlashDriverInfo(&FlashDriverAddrStart,&FlashDriverEndAddr);
-	//Fls_Init((uint8*)(FlashDriverAddrStart),FlashDriverEndAddr-FlashDriverAddrStart);
-	C40_Ip_StartSequenceInit((uint8*)(FlashDriverAddrStart));
-	C40_Ip_Init(&C40ConfigSet_BOARD_InitPeripherals_InitCfg);
+	C40_Ip_Init(&C40_Ip_InitCfg);
     return TRUE;
 }
 
@@ -94,10 +88,10 @@ static boolean FLASH_HAL_EraseSector(const uint32 i_startAddr, const uint32 i_no
 	C40_Ip_VirtualSectorsType VirtualSector;
 	sectorLength = FLASH_HAL_Get1SectorBytes();
 	//The program flash start address is 0x400000u, 32 is the program flash VirtualSector begin
-	VirtualSector = (i_startAddr - 0x400000u)/sectorLength + FLS_MAX_DATA_SECTOR;
+	VirtualSector = (i_startAddr - 0x400000u)/sectorLength + C40_IP_MAX_DATA_SECTOR;
 	for(i=0;i<i_noEraseSectors;i++)
 	{
-		if(STATUS_C40_IP_SECTOR_PROTECTED == C40_Ip_GetLock(VirtualSector+i))
+		if(C40_IP_STATUS_SECTOR_PROTECTED == C40_Ip_GetLock(VirtualSector+i))
 		{
 			C40_Ip_ClearLock(VirtualSector+i, 0);
 		}
@@ -109,8 +103,8 @@ static boolean FLASH_HAL_EraseSector(const uint32 i_startAddr, const uint32 i_no
 		{
 			c40Status = C40_Ip_MainInterfaceSectorEraseStatus();
 		}
-		while (STATUS_C40_IP_BUSY == c40Status);
-		if((STATUS_C40_IP_SUCCESS == c40Res) && (STATUS_C40_IP_SUCCESS == c40Status))
+		while (C40_IP_STATUS_BUSY == c40Status);
+		if((C40_IP_STATUS_SUCCESS == c40Res) && (C40_IP_STATUS_SUCCESS == c40Status))
 		{
 			retstates = TRUE;
 		}
@@ -151,12 +145,12 @@ static boolean FLASH_HAL_WriteData(const uint32 i_startAddr,
 	
 	sectorLength = FLASH_HAL_Get1SectorBytes();
 	//The program flash start address is 0x400000u, 32 is the program flash VirtualSector begin
-	VirtualSector = (i_startAddr - 0x400000u)/sectorLength + FLS_MAX_DATA_SECTOR;
-	endVirtualSector = ((i_startAddr + i_dataLen) - 0x400000u) / sectorLength + FLS_MAX_DATA_SECTOR;
+	VirtualSector = (i_startAddr - 0x400000u)/sectorLength + C40_IP_MAX_DATA_SECTOR;
+	endVirtualSector = ((i_startAddr + i_dataLen) - 0x400000u) / sectorLength + C40_IP_MAX_DATA_SECTOR;
 
 	while(VirtualSector <= endVirtualSector)
 	{
-		if(STATUS_C40_IP_SECTOR_PROTECTED == C40_Ip_GetLock(VirtualSector))
+		if(C40_IP_STATUS_SECTOR_PROTECTED == C40_Ip_GetLock(VirtualSector))
 		{
 			C40_Ip_ClearLock(VirtualSector, 0);
 		}
@@ -171,7 +165,7 @@ static boolean FLASH_HAL_WriteData(const uint32 i_startAddr,
 		if(i_dataLen > lessWriteLen)
 		{
 			writeDataLen = i_dataLen - (i_dataLen  & (lessWriteLen - 1));
-			if(STATUS_C40_IP_SUCCESS == C40_Ip_MainInterfaceWrite(i_startAddr,writeDataLen,i_pDataBuf, 0))
+			if(C40_IP_STATUS_SUCCESS == C40_Ip_MainInterfaceWrite(i_startAddr,writeDataLen,i_pDataBuf, 0))
 		    {
 		    	retstates = TRUE;
 		    }
@@ -186,7 +180,7 @@ static boolean FLASH_HAL_WriteData(const uint32 i_startAddr,
 				{
 					aDataBuf[index] = i_pDataBuf[writeDataLen + index];
 				}
-				if(STATUS_C40_IP_SUCCESS == C40_Ip_MainInterfaceWrite(i_startAddr+writeDataLen,8u,aDataBuf,0))
+				if(C40_IP_STATUS_SUCCESS == C40_Ip_MainInterfaceWrite(i_startAddr+writeDataLen,8u,aDataBuf,0))
 			    {
 			    	retstates = TRUE;
 			    }
@@ -198,7 +192,7 @@ static boolean FLASH_HAL_WriteData(const uint32 i_startAddr,
 			{
 				aDataBuf[index] = i_pDataBuf[writeDataLen + index];
 			}
-			if(STATUS_C40_IP_SUCCESS == C40_Ip_MainInterfaceWrite(i_startAddr+writeDataLen,8,i_pDataBuf,0))
+			if(C40_IP_STATUS_SUCCESS == C40_Ip_MainInterfaceWrite(i_startAddr+writeDataLen,8,i_pDataBuf,0))
 		    {
 		    	retstates = TRUE;
 		    }			
@@ -210,7 +204,7 @@ static boolean FLASH_HAL_WriteData(const uint32 i_startAddr,
 		retstates = TRUE;
 		while(writeDataLen < i_dataLen)
 		{
-			if(STATUS_C40_IP_SUCCESS != C40_Ip_MainInterfaceWrite(i_startAddr + writeDataLen, lessWriteLen, i_pDataBuf + writeDataLen, 0))
+			if(C40_IP_STATUS_SUCCESS != C40_Ip_MainInterfaceWrite(i_startAddr + writeDataLen, lessWriteLen, i_pDataBuf + writeDataLen, 0))
 		    {
 				retstates = FALSE;
 				
