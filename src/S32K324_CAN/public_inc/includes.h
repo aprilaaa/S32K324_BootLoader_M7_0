@@ -15,7 +15,7 @@
 #include "Lpuart_Uart_Ip_Irq.h"
 #include "Power_Ip.h"
 #include "Swt_Ip.h"
-#include "Swt_Ip_BOARD_InitPeripherals_PBcfg.h"
+#include "Swt_Ip_PBcfg.h"
 
 /*common_types.h define uint32/sint32...*/
 #include "common_types.h"

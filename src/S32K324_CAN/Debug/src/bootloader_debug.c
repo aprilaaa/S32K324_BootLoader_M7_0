@@ -69,7 +69,7 @@ void BOOTLOADER_DEBUG_Init(void)
 #ifdef EN_DEBUG_PRINT
 void Bootloader_DebugPrintInit(void)
 {
-	Lpuart_Uart_Ip_Init(LPUART_UART_IP_INSTANCE_USING_6, &Lpuart_Uart_Ip_xHwConfigPB_6_BOARD_INITPERIPHERALS);
+	Lpuart_Uart_Ip_Init(LPUART_UART_IP_INSTANCE_USING_6, &Lpuart_Uart_Ip_xHwConfigPB_6);
     Lpuart_Uart_Ip_SyncSend(LPUART_UART_IP_INSTANCE_USING_6, (const uint8 *)("welcome\n"), strlen("welcome\n"),100000u);
 }
 void Bootloader_DebugPrint(const char *fmt, ...)
