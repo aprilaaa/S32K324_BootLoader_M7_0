@@ -1,0 +1,42 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/generate/include",
+                "${workspaceFolder}/RTD/include",
+                "${workspaceFolder}/board",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/Project_Settings/Startup_Code",
+                "${workspaceFolder}/src/S32K324_CAN/public_inc",
+                "${workspaceFolder}/src/S32K324_CAN/boot/inc",
+                "${workspaceFolder}/src/S32K324_CAN/Debug/inc",
+                "${workspaceFolder}/src/S32K324_CAN/HAL/crc_hal/inc",
+                "${workspaceFolder}/src/S32K324_CAN/HAL/flash_hal/inc",
+                "${workspaceFolder}/src/S32K324_CAN/HAL/timer_hal/inc",
+                "${workspaceFolder}/src/S32K324_CAN/HAL/UDS_algorithm_hal/inc",
+                "${workspaceFolder}/src/S32K324_CAN/HAL/watchdog_hal/inc",
+                "${workspaceFolder}/src/unified_stack/auto_lib/inc",
+                "${workspaceFolder}/src/unified_stack/Demo",
+                "${workspaceFolder}/src/unified_stack/FIFO/inc",
+                "${workspaceFolder}/src/unified_stack/Flash_app/inc",
+                "${workspaceFolder}/src/unified_stack/UDS_stack/UDS/inc",
+                "${workspaceFolder}/src/unified_stack/UDS_stack/TP/inc",
+                "${workspaceFolder}/src/unified_stack/UDS_stack/TP/inc/CAN_TP",
+                "${workspaceFolder}/src/unified_stack/UDS_stack/TP/inc/LIN_TP",
+                "D:/NXP/S32DS.3.6.4/S32DS/software/PlatformSDK_S32K3/RTD/BaseNXP_TS_T40D34M50I0R0/header",
+                "D:/NXP/S32DS.3.6.4/S32DS/software/PlatformSDK_S32K3/RTD/BaseNXP_TS_T40D34M50I0R0/include"
+            ],
+            "defines": [
+                "CPU_S32K324"
+
+            ],
+            "compilerPath": "D:/NXP/S32DS.3.6.4/S32DS/build_tools/gcc_v10.2/gcc-10.2-arm32-eabi/bin/arm-none-eabi-gcc.exe",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}
