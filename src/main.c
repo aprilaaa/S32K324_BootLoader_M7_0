@@ -119,12 +119,49 @@ void AbortTransferMsg(void)
  * @brief
  *
  */
-volatile uint32 g_resetReason = 0xFFu;  /* 调试用：记录复位原因 */
+/* ===== 调试诊断变量 ===== */
+volatile uint32 g_resetReason = 0xFFu;   /* 复位原因枚举值 */
+volatile uint32 g_raw_RGM_DES = 0u;      /* 原始DES寄存器（破坏性复位状态）*/
+volatile uint32 g_raw_RGM_FES = 0u;      /* 原始FES寄存器（功能性复位状态）*/
+volatile uint32 g_faultSource  = 0u;     /* 0=正常, 1=HardFault, 2=BusFault, 3=MemManage, 4=UsageFault */
+volatile uint32 g_faultPC     = 0u;      /* 故障时的PC地址 */
+volatile uint32 g_faultLR     = 0u;      /* 故障时的LR地址 */
+volatile uint32 g_faultCFSR   = 0u;      /* Configurable Fault Status Register */
+volatile uint32 g_faultHFSR   = 0u;      /* HardFault Status Register */
+volatile uint32 g_faultMMFAR  = 0u;      /* MemManage Fault Address */
+volatile uint32 g_faultBFAR   = 0u;      /* BusFault Address */
+
+/**
+ * @brief CAN Error/BusOff 中断处理（替代 undefined_handler 死循环）
+ * @details FlexCAN0_0_IRQn 会在CAN总线错误时触发，
+ *          如果用 undefined_handler 处理，CPU 会卡死。
+ *          这里只做清除错误标志，不挂起。
+ */
+void FlexCAN0_Error_IRQHandler(void)
+{
+    /*
+     * FlexCAN0 base: 0x40304000, ESR1 offset: 0x20
+     * 读取 ESR1 并写回清除错误标志 (W1C)
+     */
+    volatile uint32 *pESR1 = (volatile uint32 *)0x40304020u;
+    volatile uint32 esr = *pESR1;
+    *pESR1 = esr;  /* W1C 清除所有错误标志 */
+    (void)esr;
+}
+
 static void BSP_init(void)
 {
     Clock_Ip_Init(&Clock_Ip_aClockConfig[0]);
     Siul2_Port_Ip_Init(NUM_OF_CONFIGURED_PINS_PortContainer_0_BOARD_InitPeripherals,g_pin_mux_InitConfigArr_PortContainer_0_BOARD_InitPeripherals);
     IntCtrl_Ip_Init(&IntCtrlConfig_0);
+
+    /*
+     * 修复关键问题：FlexCAN0_0_IRQn 在 IntCtrlConfig_0 中被使能，
+     * 但默认 handler 是 undefined_handler（死循环）。
+     * 必须在 CAN 初始化之前安装正确的处理函数或禁用它。
+     */
+    IntCtrl_Ip_InstallHandler(FlexCAN0_0_IRQn, FlexCAN0_Error_IRQHandler, NULL_PTR);
+
     IntCtrl_Ip_EnableIrq(FlexCAN0_1_IRQn);
 	IntCtrl_Ip_InstallHandler(FlexCAN0_1_IRQn, CAN0_ORED_0_31_MB_IRQHandler, NULL_PTR);
     IntCtrl_Ip_EnableIrq(LPUART6_IRQn);
@@ -134,8 +171,14 @@ static void BSP_init(void)
 	FlexCAN_Ip_SetStartMode(INST_FLEXCAN_0);
 	FlexCAN_Ip_ConfigRxMb(INST_FLEXCAN_0, RX_MAILBOX_ID, &RXCANMsgConfig, RX_PHY_ID);
 	FlexCAN_Ip_Receive(INST_FLEXCAN_0, RX_MAILBOX_ID, &g_RXCANMsg, FALSE);
-    //Disable FRET
-    ((Power_Ip_MC_RGM_Type *)IP_MC_RGM_BASE)->FRET = 0;
+
+    /*
+     * 注意：已删除 "FRET = 0" 这行代码！
+     * 原因：FRET=0 意味着任何一次功能复位都会升级为破坏性复位（拉低nRST），
+     * 这极其危险。S32K324 默认 FRET=15（允许16次功能复位才升级），
+     * 不需要手动修改此值。
+     */
+
     g_resetReason = (uint32)Power_Ip_GetResetReason();
 }
 
@@ -150,6 +193,15 @@ static void BSP_init(void)
 int test_cnt;
 int main(void)
 {
+    /*
+     * 最先保存原始复位状态寄存器（在任何代码清除它们之前）
+     * MC_RGM 基地址: 0x4028C000
+     *   DES (Destructive Event Status) 偏移 0x00
+     *   FES (Functional Event Status)  偏移 0x08
+     */
+    g_raw_RGM_DES = *(volatile uint32 *)0x4028C000u;  /* MC_RGM_DES */
+    g_raw_RGM_FES = *(volatile uint32 *)0x4028C008u;  /* MC_RGM_FES */
+
     /* 最先禁用SWT0：上电后SWT0默认使能，必须尽早关闭 */
     ((SWT_Type *)IP_SWT_0)->SR = 0xC520U;  /* 解锁序列 第1步 */
     ((SWT_Type *)IP_SWT_0)->SR = 0xD928U;  /* 解锁序列 第2步 */

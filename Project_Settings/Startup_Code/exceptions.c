@@ -88,24 +88,62 @@ void SVC_Handler(void)
 #endif
 
 
+/* 导入 main.c 中的诊断变量 */
+extern volatile uint32 g_faultSource;
+extern volatile uint32 g_faultPC;
+extern volatile uint32 g_faultLR;
+extern volatile uint32 g_faultCFSR;
+extern volatile uint32 g_faultHFSR;
+extern volatile uint32 g_faultMMFAR;
+extern volatile uint32 g_faultBFAR;
+
+/**
+ * @brief 通用故障信息采集函数
+ * @details 从栈帧中提取故障时的 PC 和 LR，并读取 Fault Status 寄存器。
+ *          可在 Lauterbach 中直接查看这些全局变量定位崩溃原因。
+ */
+static void Fault_CollectInfo(uint32 faultId)
+{
+    /* 读取 Cortex-M7 Fault Status 寄存器 */
+    g_faultSource = faultId;
+    g_faultCFSR   = *(volatile uint32 *)0xE000ED28u;  /* CFSR = MMFSR + BFSR + UFSR */
+    g_faultHFSR   = *(volatile uint32 *)0xE000ED2Cu;  /* HFSR */
+    g_faultMMFAR  = *(volatile uint32 *)0xE000ED34u;  /* MMFAR */
+    g_faultBFAR   = *(volatile uint32 *)0xE000ED38u;  /* BFAR */
+
+    /*
+     * 注意：PC 和 LR 需要从异常栈帧提取。
+     * 在纯 C 函数中无法可靠获取（编译器会修改 SP），
+     * 此处仅记录 Fault Status 寄存器。
+     * 在 Lauterbach 中可通过以下方式获取崩溃 PC：
+     *   - 查看 MSP 或 PSP 栈帧中 offset 0x18 处的值
+     *   - 或使用 frame /locals 命令
+     */
+}
+
 void NMI_Handler(void)
 {
+    Fault_CollectInfo(5u);
     while(TRUE){};
 }
 void HardFault_Handler(void)
 {
+    Fault_CollectInfo(1u);
     while(TRUE){};
 }
 void MemManage_Handler(void)
 {
+    Fault_CollectInfo(3u);
     while(TRUE){};
 }
 void BusFault_Handler(void)
 {
+    Fault_CollectInfo(2u);
     while(TRUE){};
 }
 void UsageFault_Handler(void)
 {
+    Fault_CollectInfo(4u);
     while(TRUE){};
 }
 
