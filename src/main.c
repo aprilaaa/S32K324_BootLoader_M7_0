@@ -148,19 +148,12 @@ volatile uint32 g_resetReason = 0xFFu;  /* 调试用：记录复位原因 */
 int test_cnt;
 int main(void)
 {
-    /* 最先禁用SWT0和SWT1：必须在任何其他代码之前！ */
-    /* 禁用 SWT0 */
-    ((SWT_Type *)IP_SWT_0)->SR = 0xC520U;
-    ((SWT_Type *)IP_SWT_0)->SR = 0xD928U;
-    ((SWT_Type *)IP_SWT_0)->CR = ((SWT_Type *)IP_SWT_0)->CR & ~SWT_CR_WEN_MASK;
+    /* 最先禁用SWT0：上电后SWT0默认使能，必须尽早关闭 */
+    ((SWT_Type *)IP_SWT_0)->SR = 0xC520U;  /* 解锁序列 第1步 */
+    ((SWT_Type *)IP_SWT_0)->SR = 0xD928U;  /* 解锁序列 第2步 */
+    ((SWT_Type *)IP_SWT_0)->CR = ((SWT_Type *)IP_SWT_0)->CR & ~SWT_CR_WEN_MASK;  /* 关闭SWT0 */
 
-    /* 禁用 SWT1 */
-    ((SWT_Type *)IP_SWT_1)->SR = 0xC520U;
-    ((SWT_Type *)IP_SWT_1)->SR = 0xD928U;
-    ((SWT_Type *)IP_SWT_1)->CR = ((SWT_Type *)IP_SWT_1)->CR & ~SWT_CR_WEN_MASK;
-
-    /* 调试用：记录复位原因，在调试器中查看 g_resetReason */
-    g_resetReason = (uint32)Power_Ip_GetResetReason();
+    /* 注意：不要访问SWT1，其时钟默认未使能，访问会触发HardFault */
 
     /* Write your code here */
     BOOTLOADER_MAIN_Init(&BSP_init, &AbortTransferMsg);
