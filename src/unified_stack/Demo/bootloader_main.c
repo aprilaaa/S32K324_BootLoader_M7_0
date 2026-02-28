@@ -88,7 +88,7 @@ void BOOTLOADER_MAIN_Init(void (*pfBSP_Init)(void), void (*pfAbortTxMsg)(void))
     	APP_DebugPrintf("CRC_HAL_Init failed!\n");
     }
     
-	WATCHDOG_HAL_Init();
+	//WATCHDOG_HAL_Init();  // TODO: 临时禁用看门狗，用于调试复位问题
 
 	TIMER_HAL_Init();
 
