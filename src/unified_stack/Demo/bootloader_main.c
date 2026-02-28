@@ -146,7 +146,7 @@ void BOOTLOADER_MAIN_Demo(void)
 	/*fed watchdog every 100ms*/
 	if(TRUE == TIMER_HAL_Is100msTickTimeout())
 	{
-		WATCHDOG_HAL_Fed();
+		//WATCHDOG_HAL_Fed();  // TODO: 临时禁用 - SWT未初始化时不能调用Service
 	}
 
 	TP_MainFun();

@@ -121,12 +121,6 @@ void AbortTransferMsg(void)
  */
 static void BSP_init(void)
 {
-    /* 禁用默认SWT0：S32K3xx上电后SWT0默认使能，必须先解锁再关闭 */
-    SWT_Type *SWT0 = IP_SWT_0;
-    SWT0->SR = 0xC520U;  /* 解锁序列 第1步 */
-    SWT0->SR = 0xD928U;  /* 解锁序列 第2步 */
-    SWT0->CR = SWT0->CR & ~SWT_CR_WEN_MASK;  /* 清除WEN位，禁用SWT0 */
-
     Clock_Ip_Init(&Clock_Ip_aClockConfig[0]);
     Siul2_Port_Ip_Init(NUM_OF_CONFIGURED_PINS_PortContainer_0_BOARD_InitPeripherals,g_pin_mux_InitConfigArr_PortContainer_0_BOARD_InitPeripherals);
     IntCtrl_Ip_Init(&IntCtrlConfig_0);
@@ -150,9 +144,24 @@ static void BSP_init(void)
  * - startup asm routine
  * - main()
 */
+volatile uint32 g_resetReason = 0xFFu;  /* 调试用：记录复位原因 */
 int test_cnt;
 int main(void)
 {
+    /* 最先禁用SWT0和SWT1：必须在任何其他代码之前！ */
+    /* 禁用 SWT0 */
+    ((SWT_Type *)IP_SWT_0)->SR = 0xC520U;
+    ((SWT_Type *)IP_SWT_0)->SR = 0xD928U;
+    ((SWT_Type *)IP_SWT_0)->CR = ((SWT_Type *)IP_SWT_0)->CR & ~SWT_CR_WEN_MASK;
+
+    /* 禁用 SWT1 */
+    ((SWT_Type *)IP_SWT_1)->SR = 0xC520U;
+    ((SWT_Type *)IP_SWT_1)->SR = 0xD928U;
+    ((SWT_Type *)IP_SWT_1)->CR = ((SWT_Type *)IP_SWT_1)->CR & ~SWT_CR_WEN_MASK;
+
+    /* 调试用：记录复位原因，在调试器中查看 g_resetReason */
+    g_resetReason = (uint32)Power_Ip_GetResetReason();
+
     /* Write your code here */
     BOOTLOADER_MAIN_Init(&BSP_init, &AbortTransferMsg);
     for(;;)
