@@ -119,6 +119,7 @@ void AbortTransferMsg(void)
  * @brief
  *
  */
+volatile uint32 g_resetReason = 0xFFu;  /* 调试用：记录复位原因 */
 static void BSP_init(void)
 {
     Clock_Ip_Init(&Clock_Ip_aClockConfig[0]);
@@ -135,6 +136,7 @@ static void BSP_init(void)
 	FlexCAN_Ip_Receive(INST_FLEXCAN_0, RX_MAILBOX_ID, &g_RXCANMsg, FALSE);
     //Disable FRET
     ((Power_Ip_MC_RGM_Type *)IP_MC_RGM_BASE)->FRET = 0;
+    g_resetReason = (uint32)Power_Ip_GetResetReason();
 }
 
 
@@ -144,7 +146,7 @@ static void BSP_init(void)
  * - startup asm routine
  * - main()
 */
-volatile uint32 g_resetReason = 0xFFu;  /* 调试用：记录复位原因 */
+
 int test_cnt;
 int main(void)
 {
