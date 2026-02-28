@@ -121,6 +121,12 @@ void AbortTransferMsg(void)
  */
 static void BSP_init(void)
 {
+    /* 禁用默认SWT0：S32K3xx上电后SWT0默认使能，必须先解锁再关闭 */
+    SWT_Type *SWT0 = IP_SWT_0;
+    SWT0->SR = 0xC520U;  /* 解锁序列 第1步 */
+    SWT0->SR = 0xD928U;  /* 解锁序列 第2步 */
+    SWT0->CR = SWT0->CR & ~SWT_CR_WEN_MASK;  /* 清除WEN位，禁用SWT0 */
+
     Clock_Ip_Init(&Clock_Ip_aClockConfig[0]);
     Siul2_Port_Ip_Init(NUM_OF_CONFIGURED_PINS_PortContainer_0_BOARD_InitPeripherals,g_pin_mux_InitConfigArr_PortContainer_0_BOARD_InitPeripherals);
     IntCtrl_Ip_Init(&IntCtrlConfig_0);
@@ -144,6 +150,7 @@ static void BSP_init(void)
  * - startup asm routine
  * - main()
 */
+int test_cnt;
 int main(void)
 {
     /* Write your code here */
@@ -152,6 +159,7 @@ int main(void)
     {
         BOOTLOADER_MAIN_Demo();
         SendMsg();
+        test_cnt++;
         if(exit_code != 0)
         {
             break;
