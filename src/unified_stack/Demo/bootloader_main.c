@@ -108,7 +108,7 @@ void BOOTLOADER_MAIN_Init(void (*pfBSP_Init)(void), void (*pfAbortTxMsg)(void))
 	FLASH_APP_Init();
 
 	/*Print bootloader version*/
-	BOOTLOADER_MAIN_PrintVersion();
+	// BOOTLOADER_MAIN_PrintVersion();
 }
 
 /*FUNCTION**********************************************************************
