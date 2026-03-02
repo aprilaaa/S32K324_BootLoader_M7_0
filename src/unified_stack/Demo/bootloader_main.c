@@ -88,7 +88,7 @@ void BOOTLOADER_MAIN_Init(void (*pfBSP_Init)(void), void (*pfAbortTxMsg)(void))
     	APP_DebugPrintf("CRC_HAL_Init failed!\n");
     }
     
-	//WATCHDOG_HAL_Init();  // TODO: 临时禁用看门狗，用于调试复位问题
+	WATCHDOG_HAL_Init();
 
 	TIMER_HAL_Init();
 
@@ -108,7 +108,7 @@ void BOOTLOADER_MAIN_Init(void (*pfBSP_Init)(void), void (*pfAbortTxMsg)(void))
 	FLASH_APP_Init();
 
 	/*Print bootloader version*/
-	// BOOTLOADER_MAIN_PrintVersion();
+	BOOTLOADER_MAIN_PrintVersion();
 }
 
 /*FUNCTION**********************************************************************
@@ -146,7 +146,7 @@ void BOOTLOADER_MAIN_Demo(void)
 	/*fed watchdog every 100ms*/
 	if(TRUE == TIMER_HAL_Is100msTickTimeout())
 	{
-		//WATCHDOG_HAL_Fed();  // TODO: 临时禁用 - SWT未初始化时不能调用Service
+		WATCHDOG_HAL_Fed();
 	}
 
 	TP_MainFun();
