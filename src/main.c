@@ -140,7 +140,7 @@ static void BSP_init(void)
  * - startup asm routine
  * - main()
 */
-
+volatile int main_cnt;
 int main(void)
 {
     /* Write your code here */
@@ -149,6 +149,7 @@ int main(void)
     {
         BOOTLOADER_MAIN_Demo();
         SendMsg();
+        main_cnt++;
         if(exit_code != 0)
         {
             break;
