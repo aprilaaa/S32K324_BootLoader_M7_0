@@ -49,8 +49,8 @@ ENTRY(Reset_Handler)
 
 MEMORY
 {
-    int_flash_c0               : ORIGIN = 0x00400000, LENGTH = 0x00200000    /* 2048K */
-    int_flash_c1               : ORIGIN = 0x00600000, LENGTH = 0x001D4000    /* 2048K - 176K (sBAF + HSE) */
+    int_flash_c0               : ORIGIN = 0x00400000, LENGTH = 0x00040000    /* 256K for bootloader */
+    int_flash_c1               : ORIGIN = 0x00500000, LENGTH = 0x002D4000    /* Remaining flash for APP, minus 176K (sBAF + HSE) */
 
     int_itcm                   : ORIGIN = 0x00000000, LENGTH = 0x00008000    /* 32K */
     int_dtcm                   : ORIGIN = 0x20000000, LENGTH = 0x0000F000    /* 60K */
@@ -60,6 +60,8 @@ MEMORY
     int_sram_fls_rsv_c0        : ORIGIN = 0x20417F00, LENGTH = 0x00000100
     int_sram_no_cacheable_c0   : ORIGIN = 0x20418000, LENGTH = 0x00008000    /* 32KB, needs to include int_results  */
     ram_end_c0                 : ORIGIN = 0x20420000, LENGTH = 0x00000000    /* End of core 0 ram */
+
+    ExchangeInfo               : ORIGIN = 0x20428000, LENGTH = 0x00000010    /* 16B for exchange info between bootloader and app */
 
     int_sram_c1                : ORIGIN = 0x20420000, LENGTH = 0x0000FF00    /* 64K, include int_sram_fls_rsv_c1 */
     int_sram_fls_rsv_c1        : ORIGIN = 0x2042FF00, LENGTH = 0x00000100
@@ -91,10 +93,10 @@ SECTIONS
         . = ALIGN(4);
         *(.text.startup)
         . = ALIGN(4);
-        *(.text)
-        *(.text*)
+        *(EXCLUDE_FILE(*C40_Ip.o *SchM_Mem_43_INFLS.o *flash_hal.o) .text)
+        *(EXCLUDE_FILE(*C40_Ip.o *SchM_Mem_43_INFLS.o *flash_hal.o) .text*)
         . = ALIGN(4);
-        *(.mcal_text)
+        *(EXCLUDE_FILE(*C40_Ip.o *SchM_Mem_43_INFLS.o *flash_hal.o) .mcal_text)
         . = ALIGN(4);
         *(.acmcu_code_rom)
         . = ALIGN(4);
@@ -151,6 +153,12 @@ SECTIONS
         __sram_data_begin__ = .;
         . = ALIGN(4);
         *(.ramcode)
+        . = ALIGN(4);
+        /* === Fix RWW conflict: force flash erase/write code to execute from RAM === */
+        /* C40 flash driver + its SchM dependency + flash HAL wrapper */
+        *C40_Ip.o(.text .text* .mcal_text)
+        *SchM_Mem_43_INFLS.o(.text .text* .mcal_text)
+        *flash_hal.o(.text .text* .mcal_text)
         . = ALIGN(4);
         *(.data)
         *(.data*)

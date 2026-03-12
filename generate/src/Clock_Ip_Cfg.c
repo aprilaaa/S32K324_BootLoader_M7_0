@@ -319,7 +319,7 @@ static const Clock_Ip_SelectorConfigType Clock_Ip_SelectorConfigurations_0[CLOCK
     #if CLOCK_IP_CONFIGURED_SELECTORS_0_NO > 6U
     {
         FLEXCANA_CLK,                    /* Clock name associated to selector */
-        FIRC_CLK,                    /* Name of the selected input source */
+        AIPS_PLAT_CLK,                    /* Name of the selected input source */
     },
     #endif
 

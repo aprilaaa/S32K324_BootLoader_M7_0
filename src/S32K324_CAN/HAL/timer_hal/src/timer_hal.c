@@ -71,6 +71,8 @@ void TIMER_HAL_Init(void)
 }
 
 /*Timer 1ms period called*/
+volatile uint32 Task1ms_cnt;
+volatile uint32 Task100ms_cnt;
 void TIMER_HAL_1msPeriod(void)
 {
     uint16 cntTmp = 0u;
@@ -80,12 +82,14 @@ void TIMER_HAL_1msPeriod(void)
     if(0u != cntTmp)
     {
         gs_1msCnt++;
+        Task1ms_cnt++;
     }
 
     cntTmp = gs_100msCnt + 1u;
     if(0u != cntTmp)
     {
         gs_100msCnt++;
+        
     }
 }
 
@@ -125,7 +129,7 @@ boolean TIMER_HAL_Is100msTickTimeout(void)
     if(gs_100msCnt >= 100u)
     {
         result = TRUE;
-
+        Task100ms_cnt++;
         gs_100msCnt -= 100u;
     }
 

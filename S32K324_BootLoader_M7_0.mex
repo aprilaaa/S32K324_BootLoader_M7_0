@@ -205,13 +205,13 @@
                   <clock_output id="ERM0_CLK.outFreq" value="40 MHz" locked="false" accuracy=""/>
                   <clock_output id="FIRCOUT.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLASH0_CLK.outFreq" value="40 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN0_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN1_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN2_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN0_CLK.outFreq" value="40 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN1_CLK.outFreq" value="40 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN2_CLK.outFreq" value="40 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXCAN3_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXCAN4_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXCAN5_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCANA_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCANA_CLK.outFreq" value="40 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXCANB_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXIO0_CLK.outFreq" value="160 MHz" locked="false" accuracy=""/>
                   <clock_output id="FXOSCOUT.outFreq" value="16 MHz" locked="false" accuracy=""/>
@@ -303,6 +303,7 @@
                   <setting id="MC_CGM_MUX_6_DE0" value="Enabled" locked="false"/>
                   <setting id="MC_CGM_MUX_6_DIV0.scale" value="2" locked="true"/>
                   <setting id="MODULE_CLOCKS.MC_CGM_AUX3_DIV0.scale" value="2" locked="true"/>
+                  <setting id="MODULE_CLOCKS.MC_CGM_AUX3_MUX.sel" value="MC_CGM_MUX_0_DIV1" locked="false"/>
                   <setting id="MODULE_CLOCKS.MC_CGM_AUX4_DIV0.scale" value="2" locked="true"/>
                   <setting id="PHI0.scale" value="3" locked="true"/>
                   <setting id="PHI1.scale" value="3" locked="true"/>

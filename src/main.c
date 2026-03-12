@@ -124,7 +124,10 @@ static void BSP_init(void)
 	IntCtrl_Ip_InstallHandler(FlexCAN0_1_IRQn, CAN0_ORED_0_31_MB_IRQHandler, NULL_PTR);
     IntCtrl_Ip_EnableIrq(LPUART6_IRQn);
     IntCtrl_Ip_InstallHandler(LPUART6_IRQn, LPUART_UART_IP_6_IRQHandler, NULL_PTR);
+    /* Enable PIT0 interrupt explicitly - ensure 1ms tick ISR can be triggered */
+    IntCtrl_Ip_EnableIrq(PIT0_IRQn);
     IntCtrl_Ip_InstallHandler(SWT0_IRQn, Swt_Ip_Swt0_Isr, NULL_PTR);
+    IntCtrl_Ip_EnableIrq(SWT0_IRQn);
 	FlexCAN_Ip_Init(INST_FLEXCAN_0, &FlexCAN_State0, &FlexCAN_Config0);
 	FlexCAN_Ip_SetStartMode(INST_FLEXCAN_0);
 	FlexCAN_Ip_ConfigRxMb(INST_FLEXCAN_0, RX_MAILBOX_ID, &RXCANMsgConfig, RX_PHY_ID);
@@ -140,7 +143,6 @@ static void BSP_init(void)
  * - startup asm routine
  * - main()
 */
-volatile int main_cnt;
 int main(void)
 {
     /* Write your code here */
@@ -149,7 +151,6 @@ int main(void)
     {
         BOOTLOADER_MAIN_Demo();
         SendMsg();
-        main_cnt++;
         if(exit_code != 0)
         {
             break;
