@@ -56,6 +56,8 @@ static boolean FLASH_HAL_ReadData(const uint32 i_startAddr,
 					    		uint8 *o_pDataBuf);
 
 static void FLASH_HAL_Deinit(void);
+
+extern void C40_Ip_StartSequenceInit(uint8 *FlsDrv);
 /*FUNCTION**********************************************************************
  *
  * Function Name : FLASH_HAL_Init
@@ -65,6 +67,11 @@ static void FLASH_HAL_Deinit(void);
  *END**************************************************************************/
 static boolean FLASH_HAL_Init(void)
 {
+	uint32 FlashDriverAddrStart = 0u;
+	uint32 FlashDriverEndAddr = 0u;
+
+	(void)FLASH_HAL_GetFlashDriverInfo(&FlashDriverAddrStart, &FlashDriverEndAddr);
+	C40_Ip_StartSequenceInit((uint8 *)FlashDriverAddrStart);
 	C40_Ip_Init(&C40_Ip_InitCfg);
     return TRUE;
 }

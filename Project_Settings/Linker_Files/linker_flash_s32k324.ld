@@ -217,6 +217,7 @@ SECTIONS
 
     .int_vector :
     {
+        . = ORIGIN(int_dtcm) + 0x00000800;
         . = ALIGN(2048);
         __interrupts_ram_start = .;
         . += __interrupts_init_end - __interrupts_init_start;

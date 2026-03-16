@@ -57,6 +57,8 @@ extern "C"{
 #include "OsIf.h"
 #endif
 
+#define C40_IP_MAIN_INTERFACE_TIMEOUT (0x00FFFFFFUL)
+
 /*==================================================================================================
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
@@ -211,6 +213,15 @@ static uint32 C40_Ip_u32LogicalAddressCheckFail;
 static boolean C40_Ip_bAsync = TRUE;
 
 #define MEM_43_INFLS_STOP_SEC_VAR_INIT_BOOLEAN
+#include "Mem_43_INFLS_MemMap.h"
+
+#define MEM_43_INFLS_START_SEC_VAR_INIT_UNSPECIFIED
+#include "Mem_43_INFLS_MemMap.h"
+
+typedef C40_Ip_StatusType (*C40_Ip_StartSequenceType)(uint8 Operation, uint32 TimeoutCnt);
+static C40_Ip_StartSequenceType C40_Ip_StartSequencePtr = NULL_PTR;
+
+#define MEM_43_INFLS_STOP_SEC_VAR_INIT_UNSPECIFIED
 #include "Mem_43_INFLS_MemMap.h"
 #endif
 
@@ -1983,6 +1994,19 @@ static C40_Ip_StatusType C40_Ip_DisableUtestMode(C40_Ip_StatusType ReturnStatus)
                                        GLOBAL FUNCTIONS
 ==================================================================================================*/
 #if (STD_ON == C40_IP_MAIN_INTERFACE_ENABLED)
+void C40_Ip_StartSequenceInit(uint8 *FlsDrv)
+{
+    if (NULL_PTR != FlsDrv)
+    {
+        /* Thumb function pointer must have bit0 set. */
+        C40_Ip_StartSequencePtr = (C40_Ip_StartSequenceType)(((uint32)FlsDrv) + 1UL);
+    }
+    else
+    {
+        C40_Ip_StartSequencePtr = NULL_PTR;
+    }
+}
+
 /**
  * @brief   Set synch/Asynch at IP layer base on the bAynch of HLD
  */
@@ -2546,20 +2570,29 @@ C40_Ip_StatusType C40_Ip_MainInterfaceSectorErase(C40_Ip_VirtualSectorsType Virt
 
     if (C40_IP_STATUS_SUCCESS == ReturnCode)
     {
-        /* One and only one ADATA register must also be written. This is referred to as an erase interlock write.*/
-        C40_Ip_pFlashBaseAddress->DATA[0] = 0xFFFFFFFFU;
-        /* Setup erase operation */
-        C40_Ip_pFlashBaseAddress->MCR |= FLASH_MCR_ERS_MASK;
-        /* Flash memory erase will be on a sector */
-        C40_Ip_pFlashBaseAddress->MCR &= ~FLASH_MCR_ESS_MASK;
-
-        /* if Async is true */
-        if (TRUE == C40_Ip_bAsync)
+        if (NULL_PTR != C40_Ip_StartSequencePtr)
         {
             /* Start flash access */
             C40_Ip_FlashAccessCalloutStart();
-            /* start internal erase sequence */
-            C40_Ip_pFlashBaseAddress->MCR |= FLASH_MCR_EHV_MASK;
+            (void)C40_Ip_StartSequencePtr(0U, C40_IP_MAIN_INTERFACE_TIMEOUT);
+        }
+        else
+        {
+            /* One and only one ADATA register must also be written. This is referred to as an erase interlock write.*/
+            C40_Ip_pFlashBaseAddress->DATA[0] = 0xFFFFFFFFU;
+            /* Setup erase operation */
+            C40_Ip_pFlashBaseAddress->MCR |= FLASH_MCR_ERS_MASK;
+            /* Flash memory erase will be on a sector */
+            C40_Ip_pFlashBaseAddress->MCR &= ~FLASH_MCR_ESS_MASK;
+
+            /* if Async is true */
+            if (TRUE == C40_Ip_bAsync)
+            {
+                /* Start flash access */
+                C40_Ip_FlashAccessCalloutStart();
+                /* start internal erase sequence */
+                C40_Ip_pFlashBaseAddress->MCR |= FLASH_MCR_EHV_MASK;
+            }
         }
     }
 
@@ -2707,16 +2740,25 @@ C40_Ip_StatusType C40_Ip_MainInterfaceWrite(uint32 LogicalAddress,
         /* Fault Injection point: make sequence error to test MSCR_PES bit */
         MCAL_FAULT_INJECTION_POINT(FLS_FIP_C40_MAIN_INTF_WRITE);
 
-        /* Setup program operation */
-        C40_Ip_pFlashBaseAddress->MCR |= FLASH_MCR_PGM_MASK;
-
-        /* if Async is true */
-        if (TRUE == C40_Ip_bAsync)
+        if (NULL_PTR != C40_Ip_StartSequencePtr)
         {
             /* Start flash access */
             C40_Ip_FlashAccessCalloutStart();
-            /* start internal erase sequence */
-            C40_Ip_pFlashBaseAddress->MCR |= FLASH_MCR_EHV_MASK;
+            (void)C40_Ip_StartSequencePtr(1U, C40_IP_MAIN_INTERFACE_TIMEOUT);
+        }
+        else
+        {
+            /* Setup program operation */
+            C40_Ip_pFlashBaseAddress->MCR |= FLASH_MCR_PGM_MASK;
+
+            /* if Async is true */
+            if (TRUE == C40_Ip_bAsync)
+            {
+                /* Start flash access */
+                C40_Ip_FlashAccessCalloutStart();
+                /* start internal erase sequence */
+                C40_Ip_pFlashBaseAddress->MCR |= FLASH_MCR_EHV_MASK;
+            }
         }
     }
 

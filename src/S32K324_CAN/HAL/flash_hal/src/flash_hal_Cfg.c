@@ -122,11 +122,10 @@ MagniV S12ZVL/S32ZVM   --                       21ms
 
 
 /*flash driver config*/
-/* NOTE: RTD 5.0 places the RAM vector table at 0x20000000~0x20000407 (int_dtcm).
- * The flash driver RAM area MUST NOT overlap with the vector table!
- * Move flash driver to DTCM area after vector table (0x20000800~0x20000C00). */
+/* Reserve the downloaded flash driver at the UDS script address.
+ * The RAM vector table is relocated deeper in DTCM by the linker script. */
 const BlockInfo_t gs_astFlashDriverBlock[] = {
-  0x20000800u, 0x20000C00u
+	0x20000010u, 0x20000410u
 };
 
 /*application can used space*/
