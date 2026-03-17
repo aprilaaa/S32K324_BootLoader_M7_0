@@ -49,27 +49,25 @@ ENTRY(Reset_Handler)
 
 MEMORY
 {
-    int_flash_c0               : ORIGIN = 0x00400000, LENGTH = 0x00040000    /* 256K for bootloader */
-    int_flash_c1               : ORIGIN = 0x00500000, LENGTH = 0x002D4000    /* Remaining flash for APP, minus 176K (sBAF + HSE) */
-
+    int_flash_c0               : ORIGIN = 0x00400000, LENGTH = 0x00040000    /* 16KB for bootloader flash */
+    int_flash_c1               : ORIGIN = 0x00500000, LENGTH = 0x000D4000    /* 86KB */
     int_itcm                   : ORIGIN = 0x00000000, LENGTH = 0x00008000    /* 32K */
-    int_dtcm                   : ORIGIN = 0x20000000, LENGTH = 0x0000F000    /* 60K */
-    int_stack_dtcm             : ORIGIN = 0x2000F000, LENGTH = 0x00001000    /* 4KB */
-
-    int_sram_c0                : ORIGIN = 0x20400000, LENGTH = 0x00017F00    /* 96K, include int_sram_fls_rsv_c0 */
-    int_sram_fls_rsv_c0        : ORIGIN = 0x20417F00, LENGTH = 0x00000100
+    int_dtcm                   : ORIGIN = 0x20000000, LENGTH = 0x00010000    /* 64K */
+    int_sram_c0                : ORIGIN = 0x20400000, LENGTH = 0x00016F00    /* 91.9K */
+    int_sram_fls_rsv_c0        : ORIGIN = 0x20416F00, LENGTH = 0x00000100    /* 0.1K */
+    int_sram_stack_c0          : ORIGIN = 0x20417000, LENGTH = 0x00001000    /* 4KB  */
     int_sram_no_cacheable_c0   : ORIGIN = 0x20418000, LENGTH = 0x00008000    /* 32KB, needs to include int_results  */
-    ram_end_c0                 : ORIGIN = 0x20420000, LENGTH = 0x00000000    /* End of core 0 ram */
+    int_sram_shareable         : ORIGIN = 0x20420000, LENGTH = 0x00008000    /* 32KB */
+    ram_end_c0                 : ORIGIN = 0x20428000, LENGTH = 0x00000000    /* End of core 0 ram */
 
-    ExchangeInfo               : ORIGIN = 0x20428000, LENGTH = 0x00000010    /* 16B for exchange info between bootloader and app */
-
-    int_sram_c1                : ORIGIN = 0x20420000, LENGTH = 0x0000FF00    /* 64K, include int_sram_fls_rsv_c1 */
-    int_sram_fls_rsv_c1        : ORIGIN = 0x2042FF00, LENGTH = 0x00000100
-    int_sram_no_cacheable_c1   : ORIGIN = 0x20430000, LENGTH = 0x00010000    /* 64KB, needs to include int_results  */
+    ExchangeInfo               : ORIGIN = 0x20428000, LENGTH = 0x00000010    /* 16B for exchange info bewteen bootloader and app */
+    
+    int_sram_c1                : ORIGIN = 0x20430000, LENGTH = 0x0000AF00    /* 44.8K */
+    int_sram_fls_rsv_c1        : ORIGIN = 0x2043AF00, LENGTH = 0x00000100    /* 0.1K */
+    int_sram_stack_c1          : ORIGIN = 0x2043B000, LENGTH = 0x00001000    /* 4KB  */
+    int_sram_no_cacheable_c1   : ORIGIN = 0x2043C000, LENGTH = 0x00004000    /* 16KB, needs to include int_results  */
     ram_end_c1                 : ORIGIN = 0x20440000, LENGTH = 0x00000000    /* End of core 1 ram */
-
-    int_sram_shareable         : ORIGIN = 0x20440000, LENGTH = 0x00004000    /* 16KB */
-    ram_rsvd2                  : ORIGIN = 0x20444000, LENGTH = 0             /* End of SRAM */
+    ram_rsvd2                  : ORIGIN = 0x20450000, LENGTH = 0             /* End of SRAM */
 }
 
 
@@ -244,6 +242,7 @@ SECTIONS
 
     .int_vector :
     {
+        . = ORIGIN(int_dtcm) + 0x00000800;
         . = ALIGN(2048);
         __interrupts_ram_start = .;
         . += __interrupts_init_end - __interrupts_init_start;

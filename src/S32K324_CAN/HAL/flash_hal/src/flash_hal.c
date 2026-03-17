@@ -145,26 +145,6 @@ static boolean FLASH_HAL_WriteData(const uint32 i_startAddr,
 	uint32 writeDataLen = 0u;
 	uint8 index = 0u;
 
-	uint32 sectorLength = 0u;
-	C40_Ip_StatusType c40Status,c40Res;
-	C40_Ip_VirtualSectorsType VirtualSector;
-	C40_Ip_VirtualSectorsType endVirtualSector;
-	
-	sectorLength = FLASH_HAL_Get1SectorBytes();
-	//The program flash start address is 0x400000u, 32 is the program flash VirtualSector begin
-	VirtualSector = (i_startAddr - 0x400000u)/sectorLength + C40_IP_MAX_DATA_SECTOR;
-	endVirtualSector = ((i_startAddr + i_dataLen) - 0x400000u) / sectorLength + C40_IP_MAX_DATA_SECTOR;
-
-	while(VirtualSector <= endVirtualSector)
-	{
-		if(C40_IP_STATUS_SECTOR_PROTECTED == C40_Ip_GetLock(VirtualSector))
-		{
-			C40_Ip_ClearLock(VirtualSector, 0);
-		}
-
-		VirtualSector++;
-	}
-
 	DisableAllInterrupts();
 	if(i_dataLen  & (lessWriteLen - 1))
 	{

@@ -145,11 +145,25 @@ typedef enum
 /***********************************************************/
 
 /*******************Global interrupt define************************/
-/*disable all interrupts - use PRIMASK for atomic operation*/
-#define DisableAllInterrupts()  __asm volatile("cpsid i" ::: "memory")
+/*disable all interrupts*/
+#define DisableAllInterrupts()  IntCtrl_Ip_DisableIrq(FlexCAN0_0_IRQn);\
+								IntCtrl_Ip_DisableIrq(FlexCAN0_1_IRQn);\
+								IntCtrl_Ip_DisableIrq(FlexCAN0_2_IRQn);\
+								IntCtrl_Ip_DisableIrq(FlexCAN0_3_IRQn);\
+								IntCtrl_Ip_DisableIrq(PIT0_IRQn);\
+								IntCtrl_Ip_DisableIrq(SWT0_IRQn);\
+								IntCtrl_Ip_DisableIrq(LPUART0_IRQn)
+								
+								
 
-/*enable all interrupts - use PRIMASK for atomic operation*/
-#define EnableAllInterrupts()   __asm volatile("cpsie i" ::: "memory")
+/*enable all interrupts*/
+#define EnableAllInterrupts()   IntCtrl_Ip_EnableIrq(FlexCAN0_0_IRQn);\
+								IntCtrl_Ip_EnableIrq(FlexCAN0_1_IRQn);\
+								IntCtrl_Ip_EnableIrq(FlexCAN0_2_IRQn);\
+								IntCtrl_Ip_EnableIrq(FlexCAN0_3_IRQn);\
+								IntCtrl_Ip_EnableIrq(PIT0_IRQn);\
+								IntCtrl_Ip_EnableIrq(SWT0_IRQn);\
+								IntCtrl_Ip_EnableIrq(LPUART0_IRQn)
 /***********************************************************/
 
 /*******************MCU type for flash erase a sector time***********/
